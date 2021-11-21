@@ -10,48 +10,87 @@ namespace CancelationTokenTask.Encrypttion
 {
    public class EncryptDecrypt
     {
-        public static string Encrypt(string clearText)
+       public static void FileStreamWrite(string text, string filepath)
         {
-            string EncryptionKey = "abc123";
-            byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
-            using (Aes encryptor = Aes.Create())
+            try
             {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
+                using (FileStream fs = new FileStream($" {filepath}", FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(clearBytes, 0, clearBytes.Length);
-                        cs.Close();
-                    }
-                    clearText = Convert.ToBase64String(ms.ToArray());
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(text);
+                    fs.Write(bytes, 0, bytes.Length);
+
                 }
+
             }
-            return clearText;
+            catch (Exception)
+            {
+
+
+            }
+
+
+
         }
-        public static string Decrypt(string cipherText)
+
+        public static void FileStreamRead(string text, string filepath)
         {
-            string EncryptionKey = "abc123";
-            cipherText = cipherText.Replace(" ", "+");
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
-            using (Aes encryptor = Aes.Create())
+
+            try
             {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
+                using (FileStream fs = new FileStream($"{filepath}", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.Close();
-                    }
-                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                    byte[] bytes = new byte[(int)fs.Length];
+                    fs.Read(bytes, 0, bytes.Length);
+                    text = Encoding.UTF8.GetString(bytes);
+
                 }
+
             }
-            return cipherText;
+            catch
+            {
+
+            }
+
+        }
+
+        public static string EString(string key, string text)
+        {
+
+            TripleDESCryptoServiceProvider TDC = new TripleDESCryptoServiceProvider();
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] byteHash, byteText;
+
+            byteHash = md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+            byteText = UTF8Encoding.UTF8.GetBytes(text);
+
+            md5.Clear();
+
+            TDC.Key = byteHash;
+            TDC.Mode = CipherMode.ECB;
+
+            return Convert.ToBase64String(TDC.CreateEncryptor().TransformFinalBlock(byteText, 0, byteText.Length));
+
+        }
+
+        public static string DString(string key, string text)
+        {
+
+            TripleDESCryptoServiceProvider TDC = new TripleDESCryptoServiceProvider();
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] byteHash, byteText;
+
+            byteHash = md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+            byteText = Convert.FromBase64String(text);
+
+            md5.Clear();
+
+            TDC.Key = byteHash;
+            TDC.Mode = CipherMode.ECB;
+
+            return UnicodeEncoding.UTF8.GetString(TDC.CreateDecryptor().TransformFinalBlock(byteText, 0, byteText.Length));
+
+
         }
     }
 }

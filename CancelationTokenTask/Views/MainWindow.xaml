@@ -13,7 +13,7 @@ Content="File..."
 FontSize="18"
 Height="30"
 Width="60"
-Command="{Binding FileCommand}"
+Command="{Binding FileBtnCommand}"
 Margin="1,0,10,0"></Button>
             <TextBox x:Name="fileTxtbx"
 Width="430"
@@ -26,7 +26,7 @@ FontSize="18"
 Height="30"
 ></Label>
             <PasswordBox Width="150"
-Margin="1,0,30,0"></PasswordBox>
+Margin="1,0,30,0" Name="Passwordtxtbox"></PasswordBox>
             <RadioButton x:Name="encyrptBtn"
 VerticalAlignment="Center"
 Content="Encyrpt"
@@ -41,21 +41,21 @@ FontSize="14"></RadioButton>
 Width="500"
 Height="25"
 HorizontalAlignment="Left"
-Margin="3,0,10,2"></ProgressBar>
+Margin="3,0,10,2" Value="{Binding Pv}" ></ProgressBar>
         <WrapPanel Margin="350,5,10,2">
             <Button x:Name="startBtn"
 Content="Start"
 FontSize="18"
 Height="30"
 Width="60"
-Command="{Binding StartCommand}"
+Command="{Binding StratBtnCommand}"
 Margin="1,0,30,0"></Button>
             <Button x:Name="CancelBtn"
 Content="Cancel"
 FontSize="18"
 Height="30"
 Width="60"
-Command="{Binding CancelCommand}"
+Command="{Binding CancelBtnCommand}"
 Margin="1,0,10,0"></Button>
         </WrapPanel>
     </StackPanel>
